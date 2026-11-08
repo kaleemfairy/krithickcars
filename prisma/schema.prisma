@@ -1,0 +1,77 @@
+// Krithick Cars — data model
+// PostgreSQL everywhere: `npx prisma dev` locally, Neon / Supabase in production.
+//
+// Enum-like columns are stored as strings; the allowed values live in
+// src/lib/constants.ts and are validated with zod on every write.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Vehicle {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  make           String
+  model          String
+  variant        String
+  year           Int
+  regNumber      String   @unique @map("reg_number")
+  rtoOffice      String   @map("rto_office")
+  odometerKm     Int      @map("odometer_km")
+  fuelType       String   @map("fuel_type") // PETROL | DIESEL | EV | HYBRID | CNG
+  transmission   String // MANUAL | AUTOMATIC
+  bodyType       String   @map("body_type") // SUV | SEDAN | HATCHBACK | MUV
+  exteriorColor  String   @map("exterior_color")
+  interior       String   @default("")
+  ownership      Int      @default(1)
+  insurance      String   @default("")
+  insuranceExpiry DateTime? @map("insurance_expiry")
+  serviceHistory String   @default("") @map("service_history")
+  highlights     String   @default("") // "•"-separated features shown on cards
+  askingPrice    Int      @map("asking_price") // rupees
+  floorPrice     Int      @map("floor_price") // rupees, staff-confidential
+  status         String   @default("DRAFT") // DRAFT | LIVE | UNDER_INSPECTION | BOOKED | SOLD
+  isCertified    Boolean  @default(false) @map("is_certified")
+  isFeatured     Boolean  @default(false) @map("is_featured")
+  images         String   @default("[]") // JSON: { angle, url }[]
+  inspection     String   @default("{}") @map("inspection_notes") // JSON: Inspection
+  soldAt         DateTime? @map("sold_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  leads Lead[]
+
+  @@index([status])
+  @@map("vehicles")
+}
+
+model Lead {
+  id            String   @id @default(cuid())
+  vehicleId     String?  @map("vehicle_id")
+  vehicle       Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  customerName  String   @map("customer_name")
+  customerPhone String   @map("customer_phone")
+  channel       String // WHATSAPP | CALL | FORM
+  kind          String   @default("ENQUIRY") // ENQUIRY | VALUATION | TEST_DRIVE
+  message       String   @default("")
+  status        String   @default("NEW") // NEW | CONTACTED | TEST_DRIVE_SCHEDULED | WON | LOST
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@map("leads")
+}
+
+model StaffUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("staff_users")
+}

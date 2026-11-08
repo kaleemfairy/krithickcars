@@ -1,26 +1,94 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Krithick Cars design tokens — mirrored from the approved HTML mock-ups. */
+@theme {
+  --color-onyx: #0f172a;
+  --color-ink: #1a1c20;
+  --color-graphite: #2e3035;
+  --color-gold: #d4af37;
+  --color-gold-soft: #e9c349;
+  --color-gold-pale: #ffe088;
+  --color-gold-deep: #735c00;
+  --color-gold-ink: #554300;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #1da851;
+
+  --color-background: #f9f9fe;
+  --color-surface: #ffffff;
+  --color-surface-low: #f3f3f9;
+  --color-surface-mid: #ededf3;
+  --color-surface-high: #e8e8ed;
+  --color-line: #d0c5af;
+  --color-line-soft: #e2e2e7;
+  --color-muted: #4d4635;
+  --color-subtle: #7f7663;
+  --color-danger: #ba1a1a;
+
+  --font-display: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", system-ui, sans-serif;
+
+  --radius-card: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-gold-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility eyebrow {
+  @apply text-[11px] font-bold uppercase tracking-[0.14em];
+}
+@utility field {
+  @apply w-full rounded-lg border border-line bg-surface-low px-3 py-2.5 text-sm text-ink outline-none transition
+    placeholder:text-subtle/70 focus:border-gold focus:bg-surface focus:ring-2 focus:ring-gold/25
+    aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20;
+}
+@utility field-label {
+  @apply mb-1.5 block text-[11px] font-bold uppercase tracking-[0.08em] text-muted;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition
+    active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+}
+@utility btn-wa {
+  @apply btn bg-whatsapp text-white shadow-sm hover:bg-whatsapp-dark;
+}
+@utility btn-gold {
+  @apply btn bg-gold text-gold-ink shadow-sm hover:brightness-105;
+}
+@utility btn-dark {
+  @apply btn bg-onyx text-white hover:bg-graphite;
+}
+@utility btn-outline {
+  @apply btn border border-ink/80 text-ink hover:bg-surface-mid;
+}
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line-soft bg-surface shadow-sm;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+input[type="range"] {
+  accent-color: var(--color-gold);
 }
